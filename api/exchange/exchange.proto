@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package exchange;
+
+option go_package = "github.com/masihyeganeh/exchange/api/exchange";
+
+import "google/api/annotations.proto";
+
+service Exchange {
+  // Convert - Convert the amount of crypto to the given currency.
+  rpc Convert (ConvertRequest) returns (ConvertResponse) {
+    option (google.api.http) = {
+      get: "/api/exchange/{amount}/{currency}"
+    };
+  }
+
+  // BatchConvert - Convert the amount of crypto to the given currencies.
+  rpc BatchConvert (BatchConvertRequest) returns (BatchConvertResponse) {
+    option (google.api.http) = {
+      get: "/api/batch-exchange/{amount}/{currencies}"
+    };
+  }
+
+  // ListRates - listing of rates with pagination.
+  rpc ListRates (ListRatesRequest) returns (ListRatesResponse) {
+    option (google.api.http) = {
+      get: "/api/exchange/rates"
+    };
+  }
+}
+
+message ConvertRequest {
+  // The amount of crypto to convert
+  float amount = 1;
+  // The currency to convert the crypto amount to
+  string currency = 2;
+}
+
+message ConvertResponse {
+  // The value of the fiat
+  float value = 1;
+  // The currency of the fiat
+  string currency = 2;
+}
+
+message BatchConvertRequest {
+  // The amount of crypto to convert
+  float amount = 1;
+  // The currencies to convert the crypto amount to
+  repeated string currencies = 2;
+}
+
+message BatchConvertResponse {
+  // List of converted amounts and currencies
+  repeated ConvertResponse list = 1;
+}
+
+message Rate {
+  // Currency name
+  string currency = 1;
+  // Conversion rate
+  float conversionRate = 2;
+}
+
+message ListRatesRequest {
+  // Number of page
+  int32 pageId = 1;
+  // Number of items to return
+  int32 pageSize = 2;
+
+}
+
+message ListRatesResponse {
+  // List of batches
+  repeated Rate items = 1;
+  // Number of next page
+  int32 nextPage = 2;
+}

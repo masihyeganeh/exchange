@@ -1,0 +1,233 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "exchange.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/batch-exchange/{amount}/{currencies}": {
+      "get": {
+        "summary": "BatchConvert - Convert the amount of crypto to the given currencies.",
+        "operationId": "BatchConvert",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/exchangeBatchConvertResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "amount",
+            "description": "The amount of crypto to convert",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "format": "float"
+          },
+          {
+            "name": "currencies",
+            "description": "The currencies to convert the crypto amount to",
+            "in": "path",
+            "required": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv",
+            "minItems": 1
+          }
+        ],
+        "tags": [
+          "Exchange"
+        ]
+      }
+    },
+    "/api/exchange/rates": {
+      "get": {
+        "summary": "ListRates - listing of rates with pagination.",
+        "operationId": "ListRates",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/exchangeListRatesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageId",
+            "description": "Number of page.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageSize",
+            "description": "Number of items to return.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Exchange"
+        ]
+      }
+    },
+    "/api/exchange/{amount}/{currency}": {
+      "get": {
+        "summary": "Convert - Convert the amount of crypto to the given currency.",
+        "operationId": "Convert",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/exchangeConvertResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "amount",
+            "description": "The amount of crypto to convert",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "format": "float"
+          },
+          {
+            "name": "currency",
+            "description": "The currency to convert the crypto amount to",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Exchange"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "exchangeBatchConvertResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/exchangeConvertResponse"
+          },
+          "title": "List of converted amounts and currencies"
+        }
+      }
+    },
+    "exchangeConvertResponse": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number",
+          "format": "float",
+          "title": "The value of the fiat"
+        },
+        "currency": {
+          "type": "string",
+          "title": "The currency of the fiat"
+        }
+      }
+    },
+    "exchangeListRatesResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/exchangeRate"
+          },
+          "title": "List of batches"
+        },
+        "nextPage": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Number of next page"
+        }
+      }
+    },
+    "exchangeRate": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "title": "Currency name"
+        },
+        "conversionRate": {
+          "type": "number",
+          "format": "float",
+          "title": "Conversion rate"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "runtimeError": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
