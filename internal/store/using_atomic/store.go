@@ -15,10 +15,11 @@ type Store struct {
 	currencies          []string
 	secondaryCurrencies []string
 	readSecondary       atomic.Bool
-	initialized         bool
 	lock                sync.RWMutex
 }
 
+// Set fills the map with new data. It is assumed that we only
+// have one writer that doesn't call this method concurrently
 func (s *Store) Set(data map[string]float64) {
 	currencies := make([]string, 0, len(data))
 	for currency := range data {
@@ -27,23 +28,18 @@ func (s *Store) Set(data map[string]float64) {
 
 	sort.Strings(currencies)
 
-	if !s.initialized {
+	if s.readSecondary.Load() {
 		s.data = data
 		s.currencies = currencies
+		s.lock.Lock()
+		s.readSecondary.Store(false)
+		s.lock.Unlock()
+	} else {
 		s.secondaryData = data
 		s.secondaryCurrencies = currencies
-	} else {
 		s.lock.Lock()
-		s.readSecondary.Store(s.readSecondary.Load())
+		s.readSecondary.Store(true)
 		s.lock.Unlock()
-
-		if s.readSecondary.Load() {
-			s.data = data
-			s.currencies = currencies
-		} else {
-			s.secondaryData = data
-			s.secondaryCurrencies = currencies
-		}
 	}
 }
 

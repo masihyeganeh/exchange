@@ -12,7 +12,7 @@ For now, we assume that the source crypto to exchange is `BTC`.
 implementation of the APIs.
 - - `/internal/external_services`: contains different implementations of the API call to get the convert rate
 from external services. All of them are implementation based on the `ExternalApi` interface.
-- - - `/internal/store`: contains different implementations of the storage layer.
+- - `/internal/store`: contains different implementations of the storage layer.
 - `/pkg`: contains packages that are OK to export.
 - - `/pkg/http_client`: is a simple wrapper on the `http.Client` of Go, that simplifies API calls and unmarshalling.
 - `/static`: contains generated swagger file with the static files needed to serve it.
@@ -33,4 +33,7 @@ I have 3 implementations for the storage layer:
 2. `using_syncmap`: Uses `syncmap` which is a concurrent map implementation but should be used when we made sure
 that the bottleneck is the map.
 3. `using_atomic`: Which has two maps to that writes to one and reads from the other and when the writer can acquire the
-lock, it changes an `atomic` flag that redirects reader to the alternative map and updates current map.
+lock, it changes an `atomic` flag that redirects reader to the alternative map and updates current map. It is a poor
+man's implementation of [eventual consistent map](https://github.com/jonhoo/evmap) based on
+[left-right article](https://hal.archives-ouvertes.fr/hal-01207881/document) but without any lock-free and wait-free
+data structures. It is great when we have one writer and a lot of concurrent readers.

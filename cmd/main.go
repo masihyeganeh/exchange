@@ -10,9 +10,8 @@ import (
 	"github.com/masihyeganeh/exchange/internal/app"
 	"github.com/masihyeganeh/exchange/internal/external_services/coingecko"
 	"github.com/masihyeganeh/exchange/internal/store/using_mutex"
-
-	//"github.com/masihyeganeh/exchange/internal/store/using_mutex"
 	//"github.com/masihyeganeh/exchange/internal/store/using_syncmap"
+	//"github.com/masihyeganeh/exchange/internal/store/using_atomic"
 	"github.com/masihyeganeh/exchange/pkg/http_client"
 )
 
